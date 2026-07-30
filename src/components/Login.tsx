@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 import { BASE_URL } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
 // import { addUser } from "../utils/userSlice";
-// import { useNavigate } from "react-router-dom";
-
+import { useAuthStore } from "../store/useAuthStore";
 const Login = () => {
+  const loginGlobal = useAuthStore((state) => state.login);
   const [emailId, setEmailId] = useState("maheshpat@example.com");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -14,7 +15,7 @@ const Login = () => {
   const [error, setError] = useState("");
 
   //   const dispatch = useDispatch();
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -29,8 +30,9 @@ const Login = () => {
         },
       );
       console.log(result?.data);
+      loginGlobal(result?.data);
       //   dispatch(addUser(result.data));
-      //   navigate("/");
+      navigate("/profile");
     } catch (e: any) {
       setError(
         e?.response?.data?.message?.join("\n") || "Something Went Wrong!",
@@ -55,7 +57,7 @@ const Login = () => {
       );
       console.log(result);
       //   dispatch(addUser(result?.data?.data));
-      //   navigate("/profile");
+      navigate("/profile");
     } catch (e: any) {
       setError(
         e?.response?.data?.message?.join("\n") || "Something Went Wrong!",
