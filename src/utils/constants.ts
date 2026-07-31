@@ -20,3 +20,14 @@ export const INDUSTRY_SUGGESTIONS = [
   "Cybersecurity",
   "Clean Energy",
 ];
+
+// Predefined choices for form dropdowns
+export const SKILL_SUGGESTIONS = [
+  "NestJS",
+  "React",
+  "TypeScript",
+  "Next.js",
+  "Docker",
+  "PostgreSQL",
+];
+export const LEVEL_OPTIONS = ["beginner", "intermediate", "advanced"];

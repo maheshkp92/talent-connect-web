@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+interface menteeInterest {
+  skillName: string;
+  desiredLevel: string;
+  learningGoal: string;
+}
 // Define the structure of your User data
 interface User {
   _id: string;
@@ -11,6 +16,7 @@ interface User {
   bio: string;
   photoUrl: string;
   industries: string[];
+  menteeInterests: menteeInterest[];
 }
 
 // Define the Store properties and actions
