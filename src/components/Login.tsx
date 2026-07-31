@@ -2,8 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-// import { addUser } from "../utils/userSlice";
 import { useAuthStore } from "../store/useAuthStore";
+
 const Login = () => {
   const loginGlobal = useAuthStore((state) => state.login);
   const [emailId, setEmailId] = useState("maheshpat@example.com");
@@ -14,7 +14,6 @@ const Login = () => {
   const [role, setRole] = useState("mentee");
   const [error, setError] = useState("");
 
-  //   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -29,9 +28,8 @@ const Login = () => {
           withCredentials: true,
         },
       );
-      console.log(result?.data);
+
       loginGlobal(result?.data);
-      //   dispatch(addUser(result.data));
       navigate("/profile");
     } catch (e: any) {
       setError(
@@ -55,8 +53,7 @@ const Login = () => {
           withCredentials: true,
         },
       );
-      console.log(result);
-      //   dispatch(addUser(result?.data?.data));
+      loginGlobal(result?.data?.data);
       navigate("/profile");
     } catch (e: any) {
       setError(
