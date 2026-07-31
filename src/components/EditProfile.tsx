@@ -87,7 +87,6 @@ const EditProfile = ({ user }: { user: User }) => {
   };
 
   const saveProfile = async () => {
-    // console.log(selectedIndustries);
     setError("");
     try {
       const payload = {
@@ -103,7 +102,6 @@ const EditProfile = ({ user }: { user: User }) => {
       const result = await axios.patch(BASE_URL + "/profile/edit", payload, {
         withCredentials: true,
       });
-      //   console.log(result?.data?.data);
       loginGlobal(result?.data?.data);
       setShowToast(true);
       setTimeout(() => {
