@@ -7,6 +7,10 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  userType: string;
+  bio: string;
+  photoUrl: string;
+  industries: string[];
 }
 
 // Define the Store properties and actions
