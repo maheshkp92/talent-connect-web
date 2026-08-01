@@ -15,6 +15,8 @@ import type {
   MentorSkill,
   User,
 } from "../types/userDataTypes";
+import MentorCard from "./MentorCard";
+import MenteeCard from "./MenteeCard";
 
 const EditProfile = ({ user }: { user: User }) => {
   const loginGlobal = useAuthStore((state) => state.login);
@@ -164,200 +166,306 @@ const EditProfile = ({ user }: { user: User }) => {
   return (
     <>
       <div className="flex justify-center my-10 px-4">
-        <div className="mx-auto w-full max-w-4xl">
-          <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
-            <legend className="fieldset-legend">Edit Profile</legend>
+        <div className="grid w-full max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="w-full">
+            <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
+              <legend className="fieldset-legend">Edit Profile</legend>
 
-            <div className="tabs tabs-boxed mb-4 overflow-x-auto">
-              <button
-                type="button"
-                className={`tab ${activeTab === "profile" ? "tab-active" : ""}`}
-                onClick={() => setActiveTab("profile")}
-              >
-                Profile
-              </button>
-              {showLearningTab && (
+              <div className="tabs tabs-boxed mb-4 overflow-x-auto">
                 <button
                   type="button"
-                  className={`tab ${activeTab === "learning" ? "tab-active" : ""}`}
-                  onClick={() => setActiveTab("learning")}
+                  className={`tab ${activeTab === "profile" ? "tab-active" : ""}`}
+                  onClick={() => setActiveTab("profile")}
                 >
-                  Learning Interests
+                  Profile
                 </button>
-              )}
-              {showMentoringTab && (
-                <button
-                  type="button"
-                  className={`tab ${activeTab === "mentoring" ? "tab-active" : ""}`}
-                  onClick={() => setActiveTab("mentoring")}
-                >
-                  Mentor Skills
-                </button>
-              )}
-            </div>
+                {showLearningTab && (
+                  <button
+                    type="button"
+                    className={`tab ${activeTab === "learning" ? "tab-active" : ""}`}
+                    onClick={() => setActiveTab("learning")}
+                  >
+                    Learning Interests
+                  </button>
+                )}
+                {showMentoringTab && (
+                  <button
+                    type="button"
+                    className={`tab ${activeTab === "mentoring" ? "tab-active" : ""}`}
+                    onClick={() => setActiveTab("mentoring")}
+                  >
+                    Mentor Skills
+                  </button>
+                )}
+              </div>
 
-            {activeTab === "profile" && (
-              <div className="space-y-4">
-                <div>
-                  <label className="label">First Name</label>
-                  <input
-                    type="text"
-                    className="input w-full"
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                  />
+              {activeTab === "profile" && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="label">First Name</label>
+                    <input
+                      type="text"
+                      className="input w-full"
+                      placeholder="First Name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">Last Name</label>
+                    <input
+                      type="text"
+                      className="input w-full"
+                      placeholder="Last Name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">Photo URL</label>
+                    <input
+                      type="text"
+                      className="input w-full"
+                      placeholder="Photo URL"
+                      value={photoUrl}
+                      onChange={(e) => setPhotoUrl(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">Bio</label>
+                    <input
+                      type="text"
+                      className="input w-full"
+                      placeholder="About"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label flex flex-col items-start gap-1 p-0">
+                      <span className="label-text font-semibold text-base-content">
+                        Industries & Interests
+                      </span>
+                      <span className="label-text-alt text-base-content/60">
+                        Select industries you want to mentor or learn about.
+                      </span>
+                    </label>
+                    <div className="dropdown w-full">
+                      <div
+                        className="flex flex-wrap gap-2 items-center p-2 min-h-12 w-full rounded-lg border border-base-content/20 bg-base-100 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all cursor-text"
+                        onClick={() => setIsDropdownOpen(true)}
+                      >
+                        {selectedIndustries.map((industry, index) => (
+                          <div
+                            key={index}
+                            className="badge badge-primary badge-md gap-1 py-3 px-2.5 font-medium animate-fade-in"
+                          >
+                            <span>{industry}</span>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeIndustry(index);
+                              }}
+                              className="btn btn-ghost btn-xs btn-circle text-primary-content hover:bg-primary-focus p-0 min-h-0 h-4 w-4"
+                              aria-label={`Remove ${industry}`}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+
+                        <input
+                          type="text"
+                          placeholder={
+                            selectedIndustries.length === 0
+                              ? "e.g. Fintech, SaaS..."
+                              : ""
+                          }
+                          value={inputValue}
+                          onChange={(e) => {
+                            setInputValue(e.target.value);
+                            setIsDropdownOpen(true);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && inputValue) {
+                              e.preventDefault();
+                              addIndustry(inputValue);
+                            }
+                          }}
+                          onBlur={() =>
+                            setTimeout(() => setIsDropdownOpen(false), 200)
+                          }
+                          className="flex-1 min-w-30 bg-transparent outline-none text-sm text-base-content"
+                        />
+                      </div>
+
+                      {isDropdownOpen && filteredSuggestions.length > 0 && (
+                        <ul className="dropdown-content menu z-1 p-2 shadow bg-base-100 rounded-box w-full max-h-48 overflow-y-auto mt-1 border border-base-content/10 block">
+                          {filteredSuggestions.map((item, index) => (
+                            <li key={index}>
+                              <button
+                                type="button"
+                                onMouseDown={() => addIndustry(item)}
+                                className="w-full text-left py-2 px-3 hover:bg-base-200 transition-colors"
+                              >
+                                {item}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="label">Last Name</label>
-                  <input
-                    type="text"
-                    className="input w-full"
-                    placeholder="Last Name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="label">Photo URL</label>
-                  <input
-                    type="text"
-                    className="input w-full"
-                    placeholder="Photo URL"
-                    value={photoUrl}
-                    onChange={(e) => setPhotoUrl(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="label">Bio</label>
-                  <input
-                    type="text"
-                    className="input w-full"
-                    placeholder="About"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="label flex flex-col items-start gap-1 p-0">
-                    <span className="label-text font-semibold text-base-content">
-                      Industries & Interests
-                    </span>
-                    <span className="label-text-alt text-base-content/60">
-                      Select industries you want to mentor or learn about.
-                    </span>
-                  </label>
-                  <div className="dropdown w-full">
-                    <div
-                      className="flex flex-wrap gap-2 items-center p-2 min-h-12 w-full rounded-lg border border-base-content/20 bg-base-100 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all cursor-text"
-                      onClick={() => setIsDropdownOpen(true)}
-                    >
-                      {selectedIndustries.map((industry, index) => (
-                        <div
-                          key={index}
-                          className="badge badge-primary badge-md gap-1 py-3 px-2.5 font-medium animate-fade-in"
-                        >
-                          <span>{industry}</span>
+              )}
+
+              {activeTab === "learning" && (
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-base-content">
+                      Learning Interests
+                    </h3>
+                    <p className="text-sm text-base-content/60">
+                      Detail the specific skills you want to master with your
+                      mentor.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    {menteeInterests.map((interest, index) => (
+                      <div
+                        key={index}
+                        className="p-4 rounded-xl border border-base-content/10 bg-base-50/30 relative group transition-all hover:border-primary/30"
+                      >
+                        {menteeInterests.length > 1 && (
                           <button
                             type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeIndustry(index);
-                            }}
-                            className="btn btn-ghost btn-xs btn-circle text-primary-content hover:bg-primary-focus p-0 min-h-0 h-4 w-4"
-                            aria-label={`Remove ${industry}`}
+                            onClick={() => removeInterest(index)}
+                            className="absolute top-3 right-3 btn btn-ghost btn-xs btn-circle text-error"
+                            aria-label="Remove skill block"
                           >
                             ✕
                           </button>
-                        </div>
-                      ))}
+                        )}
 
-                      <input
-                        type="text"
-                        placeholder={
-                          selectedIndustries.length === 0
-                            ? "e.g. Fintech, SaaS..."
-                            : ""
-                        }
-                        value={inputValue}
-                        onChange={(e) => {
-                          setInputValue(e.target.value);
-                          setIsDropdownOpen(true);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && inputValue) {
-                            e.preventDefault();
-                            addIndustry(inputValue);
-                          }
-                        }}
-                        onBlur={() =>
-                          setTimeout(() => setIsDropdownOpen(false), 200)
-                        }
-                        className="flex-1 min-w-30 bg-transparent outline-none text-sm text-base-content"
-                      />
-                    </div>
-
-                    {isDropdownOpen && filteredSuggestions.length > 0 && (
-                      <ul className="dropdown-content menu z-1 p-2 shadow bg-base-100 rounded-box w-full max-h-48 overflow-y-auto mt-1 border border-base-content/10 block">
-                        {filteredSuggestions.map((item, index) => (
-                          <li key={index}>
-                            <button
-                              type="button"
-                              onMouseDown={() => addIndustry(item)}
-                              className="w-full text-left py-2 px-3 hover:bg-base-200 transition-colors"
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div className="form-control w-full">
+                            <label className="label py-1">
+                              <span className="label-text font-medium text-xs">
+                                Skill / Technology
+                              </span>
+                            </label>
+                            <select
+                              className="select select-bordered select-sm w-full font-medium"
+                              value={interest.skillName}
+                              onChange={(e) =>
+                                handleFieldChange(
+                                  index,
+                                  "skillName",
+                                  e.target.value,
+                                )
+                              }
                             >
-                              {item}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+                              <option value="" disabled>
+                                Select a skill...
+                              </option>
+                              {SKILL_SUGGESTIONS.map((skill) => (
+                                <option key={skill} value={skill}>
+                                  {skill}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
 
-            {activeTab === "learning" && (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-bold text-base-content">
-                    Learning Interests
-                  </h3>
-                  <p className="text-sm text-base-content/60">
-                    Detail the specific skills you want to master with your
-                    mentor.
-                  </p>
-                </div>
+                          <div className="form-control w-full">
+                            <label className="label py-1">
+                              <span className="label-text font-medium text-xs">
+                                Target Proficiency
+                              </span>
+                            </label>
+                            <select
+                              className="select select-bordered select-sm w-full font-medium capitalize"
+                              value={interest.desiredLevel}
+                              onChange={(e) =>
+                                handleFieldChange(
+                                  index,
+                                  "desiredLevel",
+                                  e.target.value,
+                                )
+                              }
+                            >
+                              {LEVEL_OPTIONS.map((level) => (
+                                <option key={level} value={level}>
+                                  {level}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
 
-                <div className="space-y-4">
-                  {menteeInterests.map((interest, index) => (
-                    <div
-                      key={index}
-                      className="p-4 rounded-xl border border-base-content/10 bg-base-50/30 relative group transition-all hover:border-primary/30"
-                    >
-                      {menteeInterests.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeInterest(index)}
-                          className="absolute top-3 right-3 btn btn-ghost btn-xs btn-circle text-error"
-                          aria-label="Remove skill block"
-                        >
-                          ✕
-                        </button>
-                      )}
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="form-control w-full">
                           <label className="label py-1">
                             <span className="label-text font-medium text-xs">
-                              Skill / Technology
+                              Learning Goal & Context
+                            </span>
+                          </label>
+                          <textarea
+                            className="textarea textarea-bordered textarea-sm w-full h-20 text-sm leading-relaxed"
+                            placeholder="What exactly do you want to build or understand with a mentor?"
+                            value={interest.learningGoal}
+                            onChange={(e) =>
+                              handleFieldChange(
+                                index,
+                                "learningGoal",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={addNewInterest}
+                    className="btn btn-outline btn-primary btn-sm gap-2"
+                  >
+                    <span className="text-base">+</span> Add Another Skill
+                  </button>
+                </div>
+              )}
+
+              {activeTab === "mentoring" && (
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-base-content">
+                      Expertise & Skills
+                    </h3>
+                    <p className="text-sm text-base-content/60">
+                      List the technologies you are comfortable teaching and
+                      your level of mastery.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {mentorSkills.map((skill, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col sm:flex-row items-start sm:items-end gap-3 p-4 rounded-xl border border-base-content/10 bg-base-50/20 relative group transition-all hover:border-primary/30"
+                      >
+                        <div className="form-control w-full sm:flex-1">
+                          <label className="label py-1">
+                            <span className="label-text font-medium text-xs">
+                              Skill / Tool
                             </span>
                           </label>
                           <select
                             className="select select-bordered select-sm w-full font-medium"
-                            value={interest.skillName}
+                            value={skill.skillName}
                             onChange={(e) =>
-                              handleFieldChange(
+                              handleMentorFieldChange(
                                 index,
                                 "skillName",
                                 e.target.value,
@@ -365,204 +473,125 @@ const EditProfile = ({ user }: { user: User }) => {
                             }
                           >
                             <option value="" disabled>
-                              Select a skill...
+                              Select skill...
                             </option>
-                            {SKILL_SUGGESTIONS.map((skill) => (
-                              <option key={skill} value={skill}>
-                                {skill}
+                            {SKILL_SUGGESTIONS.map((item) => (
+                              <option key={item} value={item}>
+                                {item}
                               </option>
                             ))}
                           </select>
                         </div>
 
-                        <div className="form-control w-full">
+                        <div className="form-control w-full sm:w-32">
                           <label className="label py-1">
                             <span className="label-text font-medium text-xs">
-                              Target Proficiency
+                              Experience
+                            </span>
+                          </label>
+                          <div className="join w-full">
+                            <input
+                              type="number"
+                              min="0"
+                              max="40"
+                              className="input input-bordered input-sm join-item w-full font-medium text-center"
+                              value={skill.yearsOfExperience}
+                              onChange={(e) =>
+                                handleMentorFieldChange(
+                                  index,
+                                  "yearsOfExperience",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                            <span className="bg-base-200 border border-bordered px-3 flex items-center text-xs join-item font-semibold text-base-content/70">
+                              Yrs
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="form-control w-full sm:w-40">
+                          <label className="label py-1">
+                            <span className="label-text font-medium text-xs">
+                              Your Level
                             </span>
                           </label>
                           <select
                             className="select select-bordered select-sm w-full font-medium capitalize"
-                            value={interest.desiredLevel}
+                            value={skill.level}
                             onChange={(e) =>
-                              handleFieldChange(
+                              handleMentorFieldChange(
                                 index,
-                                "desiredLevel",
+                                "level",
                                 e.target.value,
                               )
                             }
                           >
-                            {LEVEL_OPTIONS.map((level) => (
-                              <option key={level} value={level}>
-                                {level}
+                            {LEVEL_OPTIONS.map((lvl) => (
+                              <option key={lvl} value={lvl}>
+                                {lvl}
                               </option>
                             ))}
                           </select>
                         </div>
-                      </div>
 
-                      <div className="form-control w-full">
-                        <label className="label py-1">
-                          <span className="label-text font-medium text-xs">
-                            Learning Goal & Context
-                          </span>
-                        </label>
-                        <textarea
-                          className="textarea textarea-bordered textarea-sm w-full h-20 text-sm leading-relaxed"
-                          placeholder="What exactly do you want to build or understand with a mentor?"
-                          value={interest.learningGoal}
-                          onChange={(e) =>
-                            handleFieldChange(
-                              index,
-                              "learningGoal",
-                              e.target.value,
-                            )
-                          }
-                        />
+                        {mentorSkills.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeSkill(index)}
+                            className="btn btn-ghost btn-sm btn-circle text-error sm:mb-0.5"
+                            aria-label="Delete experience block"
+                          >
+                            ✕
+                          </button>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={addNewSkill}
+                    className="btn btn-outline btn-primary btn-sm gap-2"
+                  >
+                    <span className="text-base">+</span> Add Technical Skill
+                  </button>
                 </div>
+              )}
 
-                <button
-                  type="button"
-                  onClick={addNewInterest}
-                  className="btn btn-outline btn-primary btn-sm gap-2"
-                >
-                  <span className="text-base">+</span> Add Another Skill
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-red-500">{error}</p>
+                <button className="btn btn-neutral" onClick={saveProfile}>
+                  Save
                 </button>
               </div>
+            </fieldset>
+          </div>
+          <div className="flex items-start justify-center">
+            {user.userType === "mentor" ? (
+              <MentorCard
+                user={{
+                  firstName,
+                  lastName,
+                  bio,
+                  photoUrl,
+                  industries: selectedIndustries,
+                  mentorSkills,
+                }}
+              />
+            ) : (
+              <MenteeCard
+                user={{
+                  firstName,
+                  lastName,
+                  bio,
+                  photoUrl,
+                  industries: selectedIndustries,
+                  menteeInterests,
+                }}
+              />
             )}
-
-            {activeTab === "mentoring" && (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-bold text-base-content">
-                    Expertise & Skills
-                  </h3>
-                  <p className="text-sm text-base-content/60">
-                    List the technologies you are comfortable teaching and your
-                    level of mastery.
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  {mentorSkills.map((skill, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col sm:flex-row items-start sm:items-end gap-3 p-4 rounded-xl border border-base-content/10 bg-base-50/20 relative group transition-all hover:border-primary/30"
-                    >
-                      <div className="form-control w-full sm:flex-1">
-                        <label className="label py-1">
-                          <span className="label-text font-medium text-xs">
-                            Skill / Tool
-                          </span>
-                        </label>
-                        <select
-                          className="select select-bordered select-sm w-full font-medium"
-                          value={skill.skillName}
-                          onChange={(e) =>
-                            handleMentorFieldChange(
-                              index,
-                              "skillName",
-                              e.target.value,
-                            )
-                          }
-                        >
-                          <option value="" disabled>
-                            Select skill...
-                          </option>
-                          {SKILL_SUGGESTIONS.map((item) => (
-                            <option key={item} value={item}>
-                              {item}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="form-control w-full sm:w-32">
-                        <label className="label py-1">
-                          <span className="label-text font-medium text-xs">
-                            Experience
-                          </span>
-                        </label>
-                        <div className="join w-full">
-                          <input
-                            type="number"
-                            min="0"
-                            max="40"
-                            className="input input-bordered input-sm join-item w-full font-medium text-center"
-                            value={skill.yearsOfExperience}
-                            onChange={(e) =>
-                              handleMentorFieldChange(
-                                index,
-                                "yearsOfExperience",
-                                e.target.value,
-                              )
-                            }
-                          />
-                          <span className="bg-base-200 border border-bordered px-3 flex items-center text-xs join-item font-semibold text-base-content/70">
-                            Yrs
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="form-control w-full sm:w-40">
-                        <label className="label py-1">
-                          <span className="label-text font-medium text-xs">
-                            Your Level
-                          </span>
-                        </label>
-                        <select
-                          className="select select-bordered select-sm w-full font-medium capitalize"
-                          value={skill.level}
-                          onChange={(e) =>
-                            handleMentorFieldChange(
-                              index,
-                              "level",
-                              e.target.value,
-                            )
-                          }
-                        >
-                          {LEVEL_OPTIONS.map((lvl) => (
-                            <option key={lvl} value={lvl}>
-                              {lvl}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {mentorSkills.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeSkill(index)}
-                          className="btn btn-ghost btn-sm btn-circle text-error sm:mb-0.5"
-                          aria-label="Delete experience block"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={addNewSkill}
-                  className="btn btn-outline btn-primary btn-sm gap-2"
-                >
-                  <span className="text-base">+</span> Add Technical Skill
-                </button>
-              </div>
-            )}
-
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-red-500">{error}</p>
-              <button className="btn btn-neutral" onClick={saveProfile}>
-                Save
-              </button>
-            </div>
-          </fieldset>
+          </div>
         </div>
       </div>
       {showToast && (

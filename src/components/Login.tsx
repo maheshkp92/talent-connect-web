@@ -32,9 +32,8 @@ const Login = () => {
       loginGlobal(result?.data);
       navigate("/profile");
     } catch (e: any) {
-      setError(
-        e?.response?.data?.message?.join("\n") || "Something Went Wrong!",
-      );
+      console.log(e.response.data.message);
+      setError(e?.response?.data?.message || "Something Went Wrong!");
     }
   };
 
@@ -141,7 +140,7 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500 mt-2 font-bold">{error}</p>
         <button
           className="btn btn-neutral mt-4"
           onClick={isLoginForm ? handleLogin : handleSignUp}

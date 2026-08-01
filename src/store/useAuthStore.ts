@@ -6,6 +6,11 @@ interface menteeInterest {
   desiredLevel: string;
   learningGoal: string;
 }
+interface mentorSkill {
+  skillName: string;
+  yearsOfExperience: number;
+  level: string;
+}
 // Define the structure of your User data
 interface User {
   _id: string;
@@ -17,6 +22,7 @@ interface User {
   photoUrl: string;
   industries: string[];
   menteeInterests: menteeInterest[];
+  mentorSkills: mentorSkill[];
 }
 
 // Define the Store properties and actions
