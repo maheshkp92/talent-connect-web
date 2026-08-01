@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Mentee from "./components/Mentee";
 import Mentor from "./components/Mentor";
+import Connection from "./components/Connection";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/mentee" element={<Mentee />} />
           <Route path="/mentor" element={<Mentor />} />
+          <Route path="/connections" element={<Connection />} />
         </Route>
       </Routes>
     </BrowserRouter>
